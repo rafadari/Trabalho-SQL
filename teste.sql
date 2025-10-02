@@ -1,5 +1,6 @@
--- Criação do Banco de Dados
-CREATE DATABASE IF NOT EXISTS MobilidadeUrbana;
+-- REMOVER O BANCO DE DADOS EXISTENTE E RECRIAR TUDO
+DROP DATABASE IF EXISTS MobilidadeUrbana;
+CREATE DATABASE MobilidadeUrbana;
 USE MobilidadeUrbana;
 
 -- Tabelas
@@ -78,42 +79,37 @@ CREATE TABLE Gerencia (
     FOREIGN KEY (id_veiculo) REFERENCES Veiculo(id_veiculo)
 );
 
-
+-- Inserções
 INSERT INTO Usuario (nome, cpf, data_nasc) VALUES
 ('João Silva', '12345678901', '1990-05-10'),
 ('Maria Souza', '98765432100', '1985-11-22'),
 ('Pedro Oliveira', '11122233344', '2000-03-15'),
 ('Ana Costa', '55566677788', '1995-07-29');
 
--- Bilhetes
 INSERT INTO Bilhete (saldo, validade) VALUES
 (50.00, '2025-12-31'),
 (30.00, '2025-06-30'),
 (15.50, '2025-03-15'),
 (100.00, '2026-01-10');
 
--- Veículos
 INSERT INTO Veiculo (placa, tipo, capacidade) VALUES
 ('ABC1234', 'Ônibus', 50),
 ('XYZ9876', 'Metrô', 200),
 ('JKL4321', 'VLT', 120),
 ('DEF5678', 'Ônibus', 45);
 
--- Autoridades
 INSERT INTO Autoridade (nome, setor) VALUES
 ('Carlos Andrade', 'Fiscalização'),
 ('Ana Lima', 'Administração'),
 ('Roberto Nunes', 'Segurança'),
 ('Fernanda Alves', 'Planejamento');
 
--- Rotas
 INSERT INTO Rota (origem, destino, distancia) VALUES
 ('Estação Central', 'Bairro Novo', 12.5),
 ('Rodoviária', 'Aeroporto', 8.7),
 ('Praça da Sé', 'Universidade', 5.3),
 ('Shopping Norte', 'Estação Sul', 15.2);
 
--- Paradas
 INSERT INTO Parada (nome, localizacao) VALUES
 ('Estação Central', 'Centro da Cidade'),
 ('Bairro Novo', 'Zona Norte'),
@@ -152,11 +148,10 @@ INSERT INTO Gerencia (id_autoridade, id_veiculo) VALUES
 (2, 3),
 (3, 4);
 
--- PROCEDIMENTOS ARMAZENADOS PARA SELECT E UPDATE
+-- PROCEDIMENTOS ARMAZENADOS
 
 -- PROCEDIMENTO PARA SELECT: USUARIO
 DELIMITER //
-
 CREATE PROCEDURE SelectUsuario (IN p_usuario_id INT)
 BEGIN
     SELECT * FROM Usuario WHERE id_usuario = p_usuario_id;
@@ -330,7 +325,7 @@ DELIMITER //
 CREATE PROCEDURE UpdateGerencia (IN p_gerencia_id INT, IN p_id_autoridade INT, IN p_id_veiculo INT)
 BEGIN
     UPDATE Gerencia
-    SET id_autoridade = p_id_autoridade, p_id_veiculo = id_veiculo
+    SET id_autoridade = p_id_autoridade, id_veiculo = p_id_veiculo
     WHERE id_gerencia = p_gerencia_id;
 END //
 DELIMITER ;
@@ -352,3 +347,70 @@ BEGIN
     WHERE tipo = p_tipo;
 END //
 DELIMITER ;
+
+-- MOSTRAR TODOS OS DADOS DE TODAS AS TABELAS
+
+-- 1. TABELA USUARIO
+SELECT '=== TABELA USUARIO ===' AS '';
+SELECT * FROM Usuario;
+
+-- 2. TABELA BILHETE
+SELECT '=== TABELA BILHETE ===' AS '';
+SELECT * FROM Bilhete;
+
+-- 3. TABELA VEICULO
+SELECT '=== TABELA VEICULO ===' AS '';
+SELECT * FROM Veiculo;
+
+-- 4. TABELA AUTORIDADE
+SELECT '=== TABELA AUTORIDADE ===' AS '';
+SELECT * FROM Autoridade;
+
+-- 5. TABELA ROTA
+SELECT '=== TABELA ROTA ===' AS '';
+SELECT * FROM Rota;
+
+-- 6. TABELA PARADA
+SELECT '=== TABELA PARADA ===' AS '';
+SELECT * FROM Parada;
+
+-- 7. TABELA UTILIZA
+SELECT '=== TABELA UTILIZA ===' AS '';
+SELECT * FROM Utiliza;
+
+-- 8. TABELA OPERA_EM
+SELECT '=== TABELA OPERA_EM ===' AS '';
+SELECT * FROM Opera_em;
+
+-- 9. TABELA PASSA_POR
+SELECT '=== TABELA PASSA_POR ===' AS '';
+SELECT * FROM Passa_por;
+
+-- 10. TABELA GERENCIA
+SELECT '=== TABELA GERENCIA ===' AS '';
+SELECT * FROM Gerencia;
+
+-- 11. LISTAR TODOS OS PROCEDIMENTOS CRIADOS
+SELECT '=== PROCEDIMENTOS ARMAZENADOS ===' AS '';
+SHOW PROCEDURE STATUS WHERE Db = 'MobilidadeUrbana';
+
+-- 12. VER TODAS AS TABELAS DO BANCO
+SELECT '=== TODAS AS TABELAS DO BANCO ===' AS '';
+SHOW TABLES;
+
+-- 13. TESTAR ALGUNS PROCEDIMENTOS
+SELECT '=== TESTANDO PROCEDIMENTOS ===' AS '';
+
+SELECT '-- ListarVeiculosPorTipo(Ônibus) --' AS '';
+CALL ListarVeiculosPorTipo('Ônibus');
+
+SELECT '-- BuscarRotasPorOrigem(Estação Central) --' AS '';
+CALL BuscarRotasPorOrigem('Estação Central');
+
+SELECT '-- SelectUsuario(1) --' AS '';
+CALL SelectUsuario(1);
+
+SELECT '-- SelectVeiculo(1) --' AS '';
+CALL SelectVeiculo(1);
+
+SELECT '=== FIM DE TODOS OS DADOS ===' AS '';
